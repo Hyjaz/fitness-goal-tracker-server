@@ -3,13 +3,12 @@ package main
 import (
 	"log"
 
-	"github.com/hyjaz/fitness-goal-tracker-server/server"
-
 	"github.com/hyjaz/fitness-goal-tracker-server/database"
+	"github.com/hyjaz/fitness-goal-tracker-server/server"
 )
 
 func main() {
-	database.New("localhost", "27017", "fitness-goal-tracker")
+	database.New("db", "27017", "fitness-goal-tracker")
 
 	server.Init()
 

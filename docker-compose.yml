@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  db:
+    image: mongo:3.0.15
+    ports:
+      - 27018:27017
+  api:
+    build: .
+    links:
+      - "db"
+    ports:
+      - 8080:8080

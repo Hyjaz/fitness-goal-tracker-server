@@ -20,9 +20,17 @@ func New(host string, port string, database string) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		err := client.Connect(ctx)
+		log.Println(err)
+		for err != nil {
+			time.Sleep(1000 * time.Millisecond)
+			err = client.Connect(ctx)
+			log.Println(err)
+		}
+
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		db = client.Database(database)
 		log.Println("database started")
 	} else {
@@ -42,6 +50,7 @@ func GetDb() *mongo.Database {
 
 func createMongoClient(host string, port string) *mongo.Client {
 	uri := fmt.Sprintf("mongodb://%s:%s", host, port)
+	log.Println(uri)
 	client, err := mongo.NewClient(uri)
 	if err != nil {
 		log.Fatal(err)
