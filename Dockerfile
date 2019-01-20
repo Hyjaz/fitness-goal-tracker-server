@@ -6,7 +6,7 @@ COPY . ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main
 
-FROM alpine:3.8
+FROM scratch
 
 WORKDIR /root/
 
