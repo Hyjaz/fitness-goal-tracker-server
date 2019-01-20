@@ -8,5 +8,6 @@ import (
 func initRoute() *gin.Engine {
 	r := gin.Default()
 	r.GET("/", controllers.GetUser)
+	r.POST("/cycle", controllers.AddCycle)
 	return r
 }
