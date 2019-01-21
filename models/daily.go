@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"time"
 
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -28,14 +27,15 @@ type MacroNutrients struct {
 	Proteins      string             `json:"proteins" bson:"proteins" binding:"required"`
 	Carbohydrates string             `json:"carbohydrates" bson:"carbohydrates" binding:"required"`
 	Fat           string             `json:"fat" bson:"fat" binding:"required"`
+	Status        bool               `json:"status" bson:"status"`
 }
 
 // AddDailyIntake add a new DailyIntake in Cycle
-func AddDailyIntake(uuid string, id primitive.ObjectID, date time.Time, macroNutrients []MacroNutrients) User {
+func AddDailyIntake(uuid string, id primitive.ObjectID, date time.Time, macroNutrients []MacroNutrients, user *User) error {
 	collection := getUserCollection()
 
-	for index := range macroNutrients {
-		macroNutrients[index].ID = primitive.NewObjectID()
+	for _, macroNutrient := range macroNutrients {
+		macroNutrient.ID = primitive.NewObjectID()
 	}
 	d := DailyIntake{
 		ID:             primitive.NewObjectID(),
@@ -46,11 +46,8 @@ func AddDailyIntake(uuid string, id primitive.ObjectID, date time.Time, macroNut
 		bson.D{bson.E{Key: "uuid", Value: uuid}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": id}}}},
 		bson.M{"$push": bson.M{"cycles.$.dailyIntakes": d}})
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: uuid}})
-
-	var user User
-	result.Decode(&user)
-	return user
+	collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: uuid}}).Decode(&user)
+	return nil
 }

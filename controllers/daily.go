@@ -22,8 +22,12 @@ func AddDaily(c *gin.Context) {
 	log.Println(dailyIntakeAsString.ID)
 	//Once we have the unit timestamp as string we parse it
 	date := parse.ConvertUnixTimestampToTime(dailyIntakeAsString.Date)
-
+	var user models.User
 	//then we pass in all necessary values to create a daily intake
-	user := models.AddDailyIntake(uuid, dailyIntakeAsString.ID, date, dailyIntakeAsString.MacroNutrients)
+	err := models.AddDailyIntake(uuid, dailyIntakeAsString.ID, date, dailyIntakeAsString.MacroNutrients, &user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
 	c.JSON(http.StatusOK, user)
 }
