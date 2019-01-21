@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"time"
 
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -22,7 +21,7 @@ type Cycle struct {
 }
 
 // AddCycle adds a new embedded document in user document
-func AddCycle(uuid string, startTime time.Time, endTime time.Time) User {
+func AddCycle(uuid string, startTime time.Time, endTime time.Time, user *User) error {
 	collection := getUserCollection()
 
 	c := Cycle{
@@ -32,14 +31,13 @@ func AddCycle(uuid string, startTime time.Time, endTime time.Time) User {
 		DailyIntakes: []DailyIntake{}}
 
 	_, err := collection.UpdateOne(nil,
-		bson.D{bson.E{Key: "uuid", Value: "123123123"}},
+		bson.D{bson.E{Key: "uuid", Value: uuid}},
 		bson.M{"$push": bson.D{bson.E{Key: "cycles", Value: c}}})
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: "123123123"}})
+	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: uuid}})
 
-	var user User
 	result.Decode(&user)
-	return user
+	return nil
 }

@@ -9,9 +9,11 @@ import (
 func GetUser(c *gin.Context) {
 	uuid := c.Query("uuid")
 	if uuid == "" {
-		c.JSON(400, "Incorrect uuid")
+		c.JSON(400, "Invalid uuid")
+		return
 	}
-	user, err := models.GetUser(c.Query("uuid"))
+	var user models.User
+	err := models.GetUser(uuid, &user)
 	if err != nil {
 		c.JSON(404, err)
 	} else {

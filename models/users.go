@@ -2,8 +2,6 @@ package models
 
 import (
 	"context"
-	"errors"
-	"log"
 
 	"github.com/hyjaz/fitness-goal-tracker-server/database"
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -21,8 +19,7 @@ func getUserCollection() *mongo.Collection {
 }
 
 // GetUser gets a user if it exists, otherwise inserts a new user and returns the document
-func GetUser(uuid string) (User, error) {
-	var user User
+func GetUser(uuid string, user *User) error {
 	collection := getUserCollection()
 
 	err := collection.FindOne(context.Background(), bson.M{"uuid": uuid}).Decode(&user)
@@ -30,20 +27,19 @@ func GetUser(uuid string) (User, error) {
 	if err != nil {
 		err = addUser(uuid)
 		if err != nil {
-			return User{}, err
+			return err
 		}
 		collection.FindOne(context.Background(), bson.M{"uuid": uuid}).Decode(&user)
 	}
 
-	return user, nil
+	return nil
 }
 
 func addUser(uuid string) error {
 	collection := getUserCollection()
-	insertOneResult, err := collection.InsertOne(context.Background(), User{UUID: uuid, Cycles: []Cycle{}})
+	_, err := collection.InsertOne(context.Background(), User{UUID: uuid, Cycles: []Cycle{}})
 	if err != nil {
-		return errors.New("Could not add user")
+		return err
 	}
-	log.Printf("Inserted a single document: %+v\n", insertOneResult)
 	return nil
 }

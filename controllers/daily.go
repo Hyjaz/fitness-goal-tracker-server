@@ -11,6 +11,7 @@ import (
 
 func AddDaily(c *gin.Context) {
 	uuid := c.Query("uuid")
+
 	// We are deserializing it to DailyIntakeTimeAsString because BindJSON does not convert a unix timestamp as string to time.
 	var dailyIntakeAsString models.DailyIntakeTimeAsString
 	if err := c.ShouldBindJSON(&dailyIntakeAsString); err != nil {

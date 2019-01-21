@@ -21,6 +21,7 @@ type DailyIntake struct {
 	MacroNutrients []MacroNutrients   `json:"macroNutrients" bson:"macroNutrients" binding:"required"`
 }
 
+// MacroNutrients macros for a meal
 type MacroNutrients struct {
 	ID            primitive.ObjectID `json:"_id" bson:"_id"`
 	MealNumber    int                `json:"mealNumber" bson:"mealNumber" binding:"required"`
@@ -29,6 +30,7 @@ type MacroNutrients struct {
 	Fat           string             `json:"fat" bson:"fat" binding:"required"`
 }
 
+// AddDailyIntake add a new DailyIntake in Cycle
 func AddDailyIntake(uuid string, id primitive.ObjectID, date time.Time, macroNutrients []MacroNutrients) User {
 	collection := getUserCollection()
 
@@ -41,12 +43,12 @@ func AddDailyIntake(uuid string, id primitive.ObjectID, date time.Time, macroNut
 		MacroNutrients: macroNutrients}
 
 	_, err := collection.UpdateOne(nil,
-		bson.D{bson.E{Key: "uuid", Value: "123123123"}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": id}}}},
-		bson.M{"$push": bson.M{"cycles.0.dailyIntakes": d}})
+		bson.D{bson.E{Key: "uuid", Value: uuid}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": id}}}},
+		bson.M{"$push": bson.M{"cycles.$.dailyIntakes": d}})
 	if err != nil {
 		log.Fatal(err)
 	}
-	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: "123123123"}})
+	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: uuid}})
 
 	var user User
 	result.Decode(&user)

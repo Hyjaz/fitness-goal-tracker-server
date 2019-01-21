@@ -20,6 +20,12 @@ func AddCycle(c *gin.Context) {
 
 	startTime := parse.ConvertUnixTimestampeToTime(cycleWithTimeAsString.StartTime)
 	endTime := parse.ConvertUnixTimestampeToTime(cycleWithTimeAsString.EndTime)
-	cycle := models.AddCycle(uuid, startTime, endTime)
-	c.JSON(http.StatusOK, cycle)
+
+	var user models.User
+	err := models.AddCycle(uuid, startTime, endTime, &user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		return
+	}
+	c.JSON(http.StatusOK, user)
 }
