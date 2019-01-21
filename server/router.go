@@ -9,5 +9,6 @@ func initRoute() *gin.Engine {
 	r := gin.Default()
 	r.GET("/", controllers.GetUser)
 	r.POST("/cycle", controllers.AddCycle)
+	r.POST("/daily", controllers.AddDaily)
 	return r
 }

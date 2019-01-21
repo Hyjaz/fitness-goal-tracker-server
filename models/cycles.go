@@ -7,6 +7,11 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 )
 
+type CycleWithTimeAsString struct {
+	StartTime string `json:"startTime" bson:"startTime" binding:"required"`
+	EndTime   string `json:"endTime" bson:"endTime" binding:"required"`
+}
+
 // Cycle contains a list your daily nutrient intakes
 type Cycle struct {
 	StartTime    time.Time     `json:"startTime" bson:"startTime"`
@@ -28,6 +33,5 @@ func AddCycle(uuid string, startTime time.Time, endTime time.Time) {
 		bson.M{"$push": bson.D{bson.E{Key: "cycles", Value: c}}})
 	if err != nil {
 		log.Println(err)
-
 	}
 }
