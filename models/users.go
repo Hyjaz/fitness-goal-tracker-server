@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	UUID   string  `json:"uuid" bson:"uuid"`
+	UUID   string  `form:"uuid" json:"uuid" bson:"uuid" binding:"required"`
 	Cycles []Cycle `json:"cycles" bson:"cycles"`
 }
 
@@ -19,17 +19,16 @@ func getUserCollection() *mongo.Collection {
 }
 
 // GetUser gets a user if it exists, otherwise inserts a new user and returns the document
-func GetUser(uuid string, user *User) error {
+func GetUser(user *User) error {
 	collection := getUserCollection()
 
-	err := collection.FindOne(context.Background(), bson.M{"uuid": uuid}).Decode(&user)
-
+	err := collection.FindOne(context.Background(), bson.D{bson.E{Key: "uuid", Value: user.UUID}}).Decode(&user)
 	if err != nil {
-		err = addUser(uuid)
+		err = addUser(user.UUID)
 		if err != nil {
 			return err
 		}
-		collection.FindOne(context.Background(), bson.M{"uuid": uuid}).Decode(&user)
+		collection.FindOne(context.Background(), bson.D{bson.E{Key: "uuid", Value: user.UUID}}).Decode(&user)
 	}
 
 	return nil

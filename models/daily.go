@@ -31,11 +31,11 @@ type MacroNutrients struct {
 }
 
 // AddDailyIntake add a new DailyIntake in Cycle
-func AddDailyIntake(uuid string, id primitive.ObjectID, date time.Time, macroNutrients []MacroNutrients, user *User) error {
+func AddDailyIntake(id primitive.ObjectID, date time.Time, macroNutrients []MacroNutrients, user *User) error {
 	collection := getUserCollection()
 
-	for _, macroNutrient := range macroNutrients {
-		macroNutrient.ID = primitive.NewObjectID()
+	for index := range macroNutrients {
+		macroNutrients[index].ID = primitive.NewObjectID()
 	}
 	d := DailyIntake{
 		ID:             primitive.NewObjectID(),
@@ -43,11 +43,11 @@ func AddDailyIntake(uuid string, id primitive.ObjectID, date time.Time, macroNut
 		MacroNutrients: macroNutrients}
 
 	_, err := collection.UpdateOne(nil,
-		bson.D{bson.E{Key: "uuid", Value: uuid}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": id}}}},
+		bson.D{bson.E{Key: "uuid", Value: user.UUID}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": id}}}},
 		bson.M{"$push": bson.M{"cycles.$.dailyIntakes": d}})
 	if err != nil {
 		return err
 	}
-	collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: uuid}}).Decode(&user)
+	collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: user.UUID}}).Decode(&user)
 	return nil
 }

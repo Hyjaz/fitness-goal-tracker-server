@@ -1,21 +1,22 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hyjaz/fitness-goal-tracker-server/models"
 )
 
 // GetUser adds the user if it hasn't been and return the users' information
 func GetUser(c *gin.Context) {
-	uuid := c.Query("uuid")
-	if uuid == "" {
-		c.JSON(400, "Invalid uuid")
+	var user models.User
+	if err := c.ShouldBindQuery(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	var user models.User
-	err := models.GetUser(uuid, &user)
+	err := models.GetUser(&user)
 	if err != nil {
-		c.JSON(404, err)
+		c.JSON(404, err.Error())
 	} else {
 		c.JSON(200, user)
 	}

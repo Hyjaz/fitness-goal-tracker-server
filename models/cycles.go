@@ -21,7 +21,7 @@ type Cycle struct {
 }
 
 // AddCycle adds a new embedded document in user document
-func AddCycle(uuid string, startTime time.Time, endTime time.Time, user *User) error {
+func AddCycle(startTime time.Time, endTime time.Time, user *User) error {
 	collection := getUserCollection()
 
 	c := Cycle{
@@ -29,14 +29,13 @@ func AddCycle(uuid string, startTime time.Time, endTime time.Time, user *User) e
 		StartTime:    startTime,
 		EndTime:      endTime,
 		DailyIntakes: []DailyIntake{}}
-
 	_, err := collection.UpdateOne(nil,
-		bson.D{bson.E{Key: "uuid", Value: uuid}},
+		bson.D{bson.E{Key: "uuid", Value: user.UUID}},
 		bson.M{"$push": bson.D{bson.E{Key: "cycles", Value: c}}})
 	if err != nil {
 		return err
 	}
-	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: uuid}})
+	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: user.UUID}})
 
 	result.Decode(&user)
 	return nil
