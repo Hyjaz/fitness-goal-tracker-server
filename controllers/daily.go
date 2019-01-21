@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,10 +17,11 @@ func AddDaily(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err})
 		return
 	}
-
+	log.Println(dailyIntakeAsString.ID)
 	//Once we have the unit timestamp as string we parse it
 	date := parse.ConvertUnixTimestampeToTime(dailyIntakeAsString.Date)
 
 	//then we pass in all necessary values to create a daily intake
-	models.AddDailyIntake(uuid, date, dailyIntakeAsString.MacroNutrients)
+	user := models.AddDailyIntake(uuid, dailyIntakeAsString.ID, date, dailyIntakeAsString.MacroNutrients)
+	c.JSON(http.StatusOK, user)
 }
