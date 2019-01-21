@@ -9,6 +9,7 @@ import (
 	parse "github.com/hyjaz/fitness-goal-tracker-server/utility"
 )
 
+// AddDaily add a dailyIntake and returns all documents
 func AddDaily(c *gin.Context) {
 	uuid := c.Query("uuid")
 
