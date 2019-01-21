@@ -7,6 +7,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
+// CycleWithTimeAsString is simply used so that a unix timestamp can be binded to the struct
 type CycleWithTimeAsString struct {
 	StartTime string `json:"startTime" bson:"startTime" binding:"required"`
 	EndTime   string `json:"endTime" bson:"endTime" binding:"required"`

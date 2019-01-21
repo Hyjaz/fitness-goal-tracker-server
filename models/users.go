@@ -8,6 +8,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 )
 
+// User form tag is required so that we can bind the query string to this struct
 type User struct {
 	UUID   string  `form:"uuid" json:"uuid" bson:"uuid" binding:"required"`
 	Cycles []Cycle `json:"cycles" bson:"cycles"`

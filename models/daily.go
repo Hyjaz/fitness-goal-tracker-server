@@ -7,6 +7,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
+//DailyIntakeTimeAsString is simply used so that a unix timestamp can be binded to the struct
 type DailyIntakeTimeAsString struct {
 	ID             primitive.ObjectID `json:"_id" bson:"_id"`
 	Date           string             `json:"date" bson:"date,string" binding:"required"`
