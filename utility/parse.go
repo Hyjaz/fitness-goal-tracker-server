@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// ConvertUnixTimestampeToTime get a timestamp as a string and return a time of type Time
-func ConvertUnixTimestampeToTime(unixTimestamp string) time.Time {
+// ConvertUnixTimestampToTime get a timestamp as a string and return a time of type Time
+func ConvertUnixTimestampToTime(unixTimestamp string) time.Time {
 	i, err := strconv.ParseInt(unixTimestamp, 10, 64)
 	if err != nil {
 		panic(err)

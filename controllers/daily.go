@@ -21,7 +21,7 @@ func AddDaily(c *gin.Context) {
 	}
 	log.Println(dailyIntakeAsString.ID)
 	//Once we have the unit timestamp as string we parse it
-	date := parse.ConvertUnixTimestampeToTime(dailyIntakeAsString.Date)
+	date := parse.ConvertUnixTimestampToTime(dailyIntakeAsString.Date)
 
 	//then we pass in all necessary values to create a daily intake
 	user := models.AddDailyIntake(uuid, dailyIntakeAsString.ID, date, dailyIntakeAsString.MacroNutrients)

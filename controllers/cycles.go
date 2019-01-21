@@ -18,8 +18,8 @@ func AddCycle(c *gin.Context) {
 		return
 	}
 
-	startTime := parse.ConvertUnixTimestampeToTime(cycleWithTimeAsString.StartTime)
-	endTime := parse.ConvertUnixTimestampeToTime(cycleWithTimeAsString.EndTime)
+	startTime := parse.ConvertUnixTimestampToTime(cycleWithTimeAsString.StartTime)
+	endTime := parse.ConvertUnixTimestampToTime(cycleWithTimeAsString.EndTime)
 
 	var user models.User
 	err := models.AddCycle(uuid, startTime, endTime, &user)
