@@ -1,21 +1,22 @@
 package main
 
 import (
-	"log"
 	"os"
+	"os/signal"
 
 	"github.com/hyjaz/fitness-goal-tracker-server/database"
 	"github.com/hyjaz/fitness-goal-tracker-server/server"
 )
 
 func main() {
-	database.New(os.Getenv("DBHOSTNAME"), "27017", "fitness-goal-tracker")
 
+	database.Init(os.Getenv("DBHOSTNAME"), os.Getenv("DBPORTNUMBER"), os.Getenv("DBNAME"))
 	server.Init()
 
-	log.Println("Disconnecting database...")
-	if err := database.Disconnect(); err != nil {
-		log.Fatal(err)
-	}
-	log.Println("database disconnected.")
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	database.Disconnect()
+	server.Shutdown()
 }

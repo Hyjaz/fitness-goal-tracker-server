@@ -12,8 +12,8 @@ import (
 var client *mongo.Client
 var db *mongo.Database
 
-// New creates a new mongo client and returns a mongo.Database pointer
-func New(host string, port string, database string) {
+// Init creates a new mongo client and returns a mongo.Database pointer
+func Init(host string, port string, database string) {
 	if client == nil && db == nil {
 		log.Println("starting database...")
 		client = createMongoClient(host, port)
@@ -39,8 +39,12 @@ func New(host string, port string, database string) {
 }
 
 // Disconnect closes the connection to the connected mongo db server
-func Disconnect() error {
-	return client.Disconnect(context.Background())
+func Disconnect() {
+	log.Println("Disconnecting database...")
+	if err := client.Disconnect(context.Background()); err != nil {
+		log.Fatal(err)
+	}
+	log.Println("database disconnected.")
 }
 
 // GetDb returns a pointer to an database
@@ -53,6 +57,7 @@ func createMongoClient(host string, port string) *mongo.Client {
 	log.Println(uri)
 	client, err := mongo.NewClient(uri)
 	if err != nil {
+		log.Fatal(err)
 		log.Fatal(err)
 	}
 	return client

@@ -10,7 +10,7 @@ FROM scratch
 
 WORKDIR /root/
 
-ENV DBHOSTNAME "db"
+ENV DBHOSTNAME="db" DBPORTNUMBER=27017 DBNAME="fitness-goal-tracker"
 
 COPY --from=builder /main .
 
