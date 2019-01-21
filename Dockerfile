@@ -10,6 +10,8 @@ FROM scratch
 
 WORKDIR /root/
 
+ENV DBHOSTNAME "db"
+
 COPY --from=builder /main .
 
 CMD ["./main"]
