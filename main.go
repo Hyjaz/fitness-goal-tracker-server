@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	// TODO: if docker is not used to run this web server, the param needs to be changed to localhost
 	database.New(os.Getenv("DBHOSTNAME"), "27017", "fitness-goal-tracker")
 
 	server.Init()
