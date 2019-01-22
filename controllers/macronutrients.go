@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,8 +21,7 @@ func AddMacroNutrient(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println(macroNutrientWithIDAsString)
-	log.Println(user)
+
 	err := models.AddMacroNutrient(macroNutrientWithIDAsString, &user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

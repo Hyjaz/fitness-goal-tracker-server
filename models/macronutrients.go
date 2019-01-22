@@ -20,18 +20,28 @@ type MacroNutrients struct {
 	Fat           string             `json:"fat" bson:"fat" binding:"required"`
 	Status        bool               `json:"status" bson:"status"`
 }
+type Something struct {
+	S []interface{}
+}
 
 func AddMacroNutrient(macroNutrientsWithIDAsString MacroNutrientsWithIDAsString, user *User) error {
 	collection := getUserCollection()
 	ID, err := primitive.ObjectIDFromHex(macroNutrientsWithIDAsString.ID)
 	macroNutrientsWithIDAsString.MacroNutrients.ID = primitive.NewObjectID()
+
 	filter := bson.M{"uuid": user.UUID, "cycles.dailyIntakes": bson.M{"$elemMatch": bson.M{"_id": ID}}}
-	// Since only one document will be returned, we can safely index
-	update := bson.M{"$push": bson.M{"cycles.$.dailyIntakes.$[].macroNutrients": macroNutrientsWithIDAsString.MacroNutrients}}
-	optionsArrayFilters := options.ArrayFilters{Filters: [bson.M{"i._id": ID}]}
-	// options := options.UpdateOptions{ArrayFilters: }
-	arrayFilter := bson.M{"$arrayFilter": bson.M{"i._id": ID}}
-	_, err = collection.UpdateOne(nil, filter, update, arrayFilter)
+	update := bson.M{"$push": bson.M{"cycles.$.dailyIntakes.$[i].macroNutrients": macroNutrientsWithIDAsString.MacroNutrients}}
+
+	//options
+	//Can I convert a []T to an []interface{}?
+	//Not directly. It is disallowed by the language specification because the
+	//two types do not have the same representation in memory. It is necessary to copy
+	//the elements individually to the destination slice. This example converts a slice of int to a slice of interface{}:
+	optionsArrayFilters := options.ArrayFilters{}
+	dailyIntakeFilter := bson.M{"i._id": ID}
+	optionsArrayFilters.Filters = append(optionsArrayFilters.Filters, dailyIntakeFilter)
+	options := options.UpdateOptions{ArrayFilters: &optionsArrayFilters}
+	_, err = collection.UpdateOne(nil, filter, update, &options)
 
 	if err != nil {
 		return err
