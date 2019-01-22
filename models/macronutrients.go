@@ -6,7 +6,7 @@ import (
 )
 
 type MacroNutrientsWithIDAsString struct {
-	IDDaily        string         `json:"_idDaily" bson:"_idDaily" binding:"required"`
+	ID             string         `json:"_id" bson:"_id" binding:"required"`
 	MacroNutrients MacroNutrients `json:"macroNutrients" bson:"macroNutrients" binding:"required"`
 }
 
@@ -22,9 +22,9 @@ type MacroNutrients struct {
 
 func AddMacroNutrient(macroNutrientsWithIDAsString MacroNutrientsWithIDAsString, user *User) error {
 	collection := getUserCollection()
-	dailyIntakeObjectID, err := primitive.ObjectIDFromHex(macroNutrientsWithIDAsString.IDDaily)
+	ID, err := primitive.ObjectIDFromHex(macroNutrientsWithIDAsString.ID)
 	macroNutrientsWithIDAsString.MacroNutrients.ID = primitive.NewObjectID()
-	filter := bson.M{"uuid": user.UUID, "cycles.dailyIntakes": bson.M{"$elemMatch": bson.M{"_id": dailyIntakeObjectID}}}
+	filter := bson.M{"uuid": user.UUID, "cycles.dailyIntakes": bson.M{"$elemMatch": bson.M{"_id": ID}}}
 	update := bson.M{"$push": bson.M{"cycles.0.dailyIntakes.0.macroNutrients": macroNutrientsWithIDAsString.MacroNutrients}}
 	_, err = collection.UpdateOne(nil, filter, update)
 
