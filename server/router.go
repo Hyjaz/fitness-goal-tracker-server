@@ -10,5 +10,6 @@ func initRoute() *gin.Engine {
 	r.GET("/", controllers.GetUser)
 	r.POST("/cycle", controllers.AddCycle)
 	r.POST("/daily", controllers.AddDaily)
+	r.POST("/macronutrients", controllers.AddMacroNutrient)
 	return r
 }

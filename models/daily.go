@@ -21,16 +21,6 @@ type DailyIntake struct {
 	MacroNutrients []MacroNutrients   `json:"macroNutrients" bson:"macroNutrients" binding:"required"`
 }
 
-// MacroNutrients macros for a meal
-type MacroNutrients struct {
-	ID            primitive.ObjectID `json:"_id" bson:"_id"`
-	MealNumber    int                `json:"mealNumber" bson:"mealNumber" binding:"required"`
-	Proteins      string             `json:"proteins" bson:"proteins" binding:"required"`
-	Carbohydrates string             `json:"carbohydrates" bson:"carbohydrates" binding:"required"`
-	Fat           string             `json:"fat" bson:"fat" binding:"required"`
-	Status        bool               `json:"status" bson:"status"`
-}
-
 // AddDailyIntake add a new DailyIntake in Cycle
 func AddDailyIntake(id string, date time.Time, macroNutrients []MacroNutrients, user *User) error {
 	collection := getUserCollection()
