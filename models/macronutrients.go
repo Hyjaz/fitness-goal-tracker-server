@@ -25,6 +25,7 @@ func AddMacroNutrient(macroNutrientsWithIDAsString MacroNutrientsWithIDAsString,
 	ID, err := primitive.ObjectIDFromHex(macroNutrientsWithIDAsString.ID)
 	macroNutrientsWithIDAsString.MacroNutrients.ID = primitive.NewObjectID()
 	filter := bson.M{"uuid": user.UUID, "cycles.dailyIntakes": bson.M{"$elemMatch": bson.M{"_id": ID}}}
+	// Since only one document will be returned, we can safely index
 	update := bson.M{"$push": bson.M{"cycles.0.dailyIntakes.0.macroNutrients": macroNutrientsWithIDAsString.MacroNutrients}}
 	_, err = collection.UpdateOne(nil, filter, update)
 
