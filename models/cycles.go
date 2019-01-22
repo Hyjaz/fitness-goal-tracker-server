@@ -15,7 +15,7 @@ type CycleWithTimeAsString struct {
 
 // Cycle contains a list your daily nutrient intakes
 type Cycle struct {
-	ID           primitive.ObjectID `json:"_id" bson:"_id" binding:"required"`
+	ID           primitive.ObjectID `json:"_id" bson:"_id"`
 	StartTime    time.Time          `json:"startTime" bson:"startTime"`
 	EndTime      time.Time          `json:"endTime" bson:"endTime"`
 	DailyIntakes []DailyIntake      `json:"dailyIntakes" bson:"dailyIntakes"`
@@ -30,6 +30,7 @@ func AddCycle(startTime time.Time, endTime time.Time, user *User) error {
 		StartTime:    startTime,
 		EndTime:      endTime,
 		DailyIntakes: []DailyIntake{}}
+
 	_, err := collection.UpdateOne(nil,
 		bson.D{bson.E{Key: "uuid", Value: user.UUID}},
 		bson.M{"$push": bson.D{bson.E{Key: "cycles", Value: c}}})

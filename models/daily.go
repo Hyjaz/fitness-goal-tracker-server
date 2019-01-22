@@ -9,9 +9,9 @@ import (
 
 //DailyIntakeTimeAsString is simply used so that a unix timestamp can be binded to the struct
 type DailyIntakeTimeAsString struct {
-	ID             primitive.ObjectID `json:"_id" bson:"_id"`
-	Date           string             `json:"date" bson:"date,string" binding:"required"`
-	MacroNutrients []MacroNutrients   `json:"macroNutrients" bson:"macroNutrients" binding:"required"`
+	ID             string           `json:"_id" bson:"_id" binding:"required"`
+	Date           string           `json:"date" bson:"date,string" binding:"required"`
+	MacroNutrients []MacroNutrients `json:"macroNutrients" bson:"macroNutrients" binding:"required"`
 }
 
 //DailyIntake takes
@@ -32,8 +32,10 @@ type MacroNutrients struct {
 }
 
 // AddDailyIntake add a new DailyIntake in Cycle
-func AddDailyIntake(id primitive.ObjectID, date time.Time, macroNutrients []MacroNutrients, user *User) error {
+func AddDailyIntake(id string, date time.Time, macroNutrients []MacroNutrients, user *User) error {
 	collection := getUserCollection()
+
+	cycleObjectID, err := primitive.ObjectIDFromHex(id)
 
 	for index := range macroNutrients {
 		macroNutrients[index].ID = primitive.NewObjectID()
@@ -43,9 +45,10 @@ func AddDailyIntake(id primitive.ObjectID, date time.Time, macroNutrients []Macr
 		Date:           date,
 		MacroNutrients: macroNutrients}
 
-	_, err := collection.UpdateOne(nil,
-		bson.D{bson.E{Key: "uuid", Value: user.UUID}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": id}}}},
+	_, err = collection.UpdateOne(nil,
+		bson.D{bson.E{Key: "uuid", Value: user.UUID}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": cycleObjectID}}}},
 		bson.M{"$push": bson.M{"cycles.$.dailyIntakes": d}})
+
 	if err != nil {
 		return err
 	}
