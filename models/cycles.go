@@ -30,14 +30,13 @@ func AddCycle(startTime time.Time, endTime time.Time, user *User) error {
 		StartTime:    startTime,
 		EndTime:      endTime,
 		DailyIntakes: []DailyIntake{}}
-
-	_, err := collection.UpdateOne(nil,
-		bson.D{bson.E{Key: "uuid", Value: user.UUID}},
-		bson.M{"$push": bson.D{bson.E{Key: "cycles", Value: c}}})
+	filter := bson.M{"uuid": user.UUID}
+	update := bson.M{"$push": bson.M{"cycles": c}}
+	_, err := collection.UpdateOne(nil, filter, update)
 	if err != nil {
 		return err
 	}
-	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: user.UUID}})
+	result := collection.FindOne(nil, filter)
 
 	result.Decode(&user)
 	return nil

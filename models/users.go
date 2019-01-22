@@ -22,14 +22,14 @@ func getUserCollection() *mongo.Collection {
 // GetUser gets a user if it exists, otherwise inserts a new user and returns the document
 func GetUser(user *User) error {
 	collection := getUserCollection()
-
-	err := collection.FindOne(context.Background(), bson.D{bson.E{Key: "uuid", Value: user.UUID}}).Decode(&user)
+	filter := bson.M{"uuid": user.UUID}
+	err := collection.FindOne(context.Background(), filter).Decode(&user)
 	if err != nil {
 		err = addUser(user.UUID)
 		if err != nil {
 			return err
 		}
-		collection.FindOne(context.Background(), bson.D{bson.E{Key: "uuid", Value: user.UUID}}).Decode(&user)
+		collection.FindOne(context.Background(), filter).Decode(&user)
 	}
 
 	return nil

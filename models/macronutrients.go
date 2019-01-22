@@ -1,14 +1,12 @@
 package models
 
 import (
-	"log"
-
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
 type MacroNutrientsWithIDAsString struct {
-	ID             string         `json:"_id" bson:"_id" binding:"required"`
+	IDDaily        string         `json:"_idDaily" bson:"_idDaily" binding:"required"`
 	MacroNutrients MacroNutrients `json:"macroNutrients" bson:"macroNutrients" binding:"required"`
 }
 
@@ -24,17 +22,15 @@ type MacroNutrients struct {
 
 func AddMacroNutrient(macroNutrientsWithIDAsString MacroNutrientsWithIDAsString, user *User) error {
 	collection := getUserCollection()
-	dailyIntakeObjectID, err := primitive.ObjectIDFromHex(macroNutrientsWithIDAsString.ID)
+	dailyIntakeObjectID, err := primitive.ObjectIDFromHex(macroNutrientsWithIDAsString.IDDaily)
 	macroNutrientsWithIDAsString.MacroNutrients.ID = primitive.NewObjectID()
-	result := collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: user.UUID}, bson.E{Key: "dailyIntakes", Value: bson.M{"$elemMatch": bson.M{"_id": dailyIntakeObjectID}}}})
-	result.Decode(&user)
-	log.Println(user)
-	_, err = collection.UpdateOne(nil, bson.D{bson.E{Key: "uuid", Value: user.UUID}, bson.E{Key: "dailyIntakes", Value: bson.M{"$elemMatch": bson.M{"_id": dailyIntakeObjectID}}}},
-		bson.M{"$push": bson.M{"dailyIntakes.$.macroNutrients": macroNutrientsWithIDAsString.MacroNutrients}})
+	filter := bson.M{"uuid": user.UUID, "cycles.dailyIntakes": bson.M{"$elemMatch": bson.M{"_id": dailyIntakeObjectID}}}
+	update := bson.M{"$push": bson.M{"cycles.0.dailyIntakes.0.macroNutrients": macroNutrientsWithIDAsString.MacroNutrients}}
+	_, err = collection.UpdateOne(nil, filter, update)
 
 	if err != nil {
 		return err
 	}
-	collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: user.UUID}}).Decode(&user)
+	collection.FindOne(nil, bson.M{"uuid": user.UUID}).Decode(&user)
 	return nil
 }

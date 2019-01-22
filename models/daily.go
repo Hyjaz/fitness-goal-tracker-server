@@ -34,14 +34,13 @@ func AddDailyIntake(id string, date time.Time, macroNutrients []MacroNutrients, 
 		ID:             primitive.NewObjectID(),
 		Date:           date,
 		MacroNutrients: macroNutrients}
-
-	_, err = collection.UpdateOne(nil,
-		bson.D{bson.E{Key: "uuid", Value: user.UUID}, bson.E{Key: "cycles", Value: bson.M{"$elemMatch": bson.M{"_id": cycleObjectID}}}},
-		bson.M{"$push": bson.M{"cycles.$.dailyIntakes": d}})
+	filter := bson.M{"uuid": user.UUID, "cycles": bson.M{"$elemMatch": bson.M{"_id": cycleObjectID}}}
+	update := bson.M{"$push": bson.M{"cycles.$.dailyIntakes": d}}
+	_, err = collection.UpdateOne(nil, filter, update)
 
 	if err != nil {
 		return err
 	}
-	collection.FindOne(nil, bson.D{bson.E{Key: "uuid", Value: user.UUID}}).Decode(&user)
+	collection.FindOne(nil, bson.M{"uuid": user.UUID}).Decode(&user)
 	return nil
 }
