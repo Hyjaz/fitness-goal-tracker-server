@@ -34,6 +34,7 @@ func AddDailyIntake(id string, date time.Time, macroNutrients []MacroNutrients, 
 		ID:             primitive.NewObjectID(),
 		Date:           date,
 		MacroNutrients: macroNutrients}
+
 	filter := bson.M{"uuid": user.UUID, "cycles": bson.M{"$elemMatch": bson.M{"_id": cycleObjectID}}}
 	update := bson.M{"$push": bson.M{"cycles.$.dailyIntakes": d}}
 	_, err = collection.UpdateOne(nil, filter, update)
