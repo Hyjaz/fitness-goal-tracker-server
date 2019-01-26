@@ -18,3 +18,17 @@ spec:
           ports:
             - containerPort: 8080
               name: http
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fitness-goal-tracker-server-service
+spec:
+  selector:
+    app: fitness-goal-tracker-server
+  ports:
+  - protocol: TCP
+    targetPort: 8080
+    port: 80
+    name: http
+  type: LoadBalancer
