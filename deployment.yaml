@@ -15,22 +15,7 @@ spec:
       containers:
         - name: fitness-goal-tracker-server-container
           image: hyjazloudin/fitness-goal-tracker-server:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: http
-
-# For this service to work locally you will need to run the command "minikube tunnel"
-# Otherwise you will need to change the type under spec to NodePort
-apiVersion: v1
-kind: Service
-metadata:
-  name: fitness-goal-tracker-server-service
-spec:
-  selector:
-    app: fitness-goal-tracker-server
-  ports:
-  - protocol: TCP
-    targetPort: 8080
-    port: 80
-    name: http
-  type: LoadBalancer
