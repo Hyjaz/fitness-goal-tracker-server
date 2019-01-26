@@ -19,6 +19,8 @@ spec:
             - containerPort: 8080
               name: http
 
+# For this service to work locally you will need to run the command "minikube tunnel"
+# Otherwise you will need to change the type under spec to NodePort
 apiVersion: v1
 kind: Service
 metadata:
