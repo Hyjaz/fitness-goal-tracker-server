@@ -4,7 +4,7 @@ COPY . ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main
 
 FROM scratch
-WORKDIR /root/
+WORKDIR /
 ENV DBHOSTNAME="db" DBPORTNUMBER=27017 DBNAME="fitness-goal-tracker"
 COPY --from=builder /main .
 CMD ["./main"]
