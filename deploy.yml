@@ -40,15 +40,18 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: hyjazloudin-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/query-routing: default/query-routing
 spec:
   rules:
   - http:
       paths:
-      - path: /status
+      - path: /server
         backend:
           serviceName: server-service
           servicePort: 80
-      - path: /
-        backend:
-          serviceName: client-service
-          servicePort: 80
+      # - path: /
+      #   backend:
+      #     serviceName: client-service
+      #     servicePort: 80
