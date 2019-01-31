@@ -32,10 +32,10 @@ func AddMacroNutrient(macroNutrientsWithCycleAndDailyIntakeID MacroNutrientsWith
 	macroNutrientsWithCycleAndDailyIntakeID.MacroNutrients.ID = primitive.NewObjectID()
 
 	filter := bson.M{"uuid": user.UUID}
-	update := bson.M{"$push": bson.M{"cycles.$[i].dailyIntakes.$[j].macroNutrients": macroNutrientsWithCycleAndDailyIntakeID.MacroNutrients}}
+	update := bson.M{"$push": bson.M{"cycles.$[cycle].dailyIntakes.$[dailyIntake].macroNutrients": macroNutrientsWithCycleAndDailyIntakeID.MacroNutrients}}
 	optionsArrayFilters := options.ArrayFilters{}
-	cycleFilter := bson.M{"i._id": cycleID}
-	dailyIntakeFilter := bson.M{"j._id": dailyID}
+	cycleFilter := bson.M{"cycle._id": cycleID}
+	dailyIntakeFilter := bson.M{"dailyIntake._id": dailyID}
 	optionsArrayFilters.Filters = append(optionsArrayFilters.Filters, cycleFilter)
 	optionsArrayFilters.Filters = append(optionsArrayFilters.Filters, dailyIntakeFilter)
 	options := options.UpdateOptions{ArrayFilters: &optionsArrayFilters}
