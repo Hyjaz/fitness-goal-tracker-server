@@ -10,14 +10,13 @@ import (
 // AddDaily add a dailyIntake and returns all documents
 func AddDaily(c *gin.Context) {
 	var user models.User
-	var dailyIntakeDateAsString models.DailyIntakeDataAsString
+	var dailyIntakeDateAsString models.DailyIntakeDateAsString
 
 	if err := c.ShouldBindQuery(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// We are deserializing it to DailyIntakeTimeAsString because BindJSON does not convert a unix timestamp as string to time.
 	if err := c.ShouldBindJSON(&dailyIntakeDateAsString); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

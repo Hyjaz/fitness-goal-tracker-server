@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +10,6 @@ import (
 // GetUser adds the user if it hasn't been and return the users' information
 func GetUser(c *gin.Context) {
 	var user models.User
-	log.Println("Inside controller GetUser")
 	if err := c.ShouldBindQuery(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
