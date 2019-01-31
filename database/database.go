@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/mongodb/mongo-go-driver/mongo/readpref"
 )
 
 var client *mongo.Client
@@ -15,20 +16,23 @@ var db *mongo.Database
 // Init creates a new mongo client and returns a mongo.Database pointer
 func Init(host string, port string, database string) {
 	if client == nil && db == nil {
-		log.Println("starting database...")
 		client = createMongoClient(host, port)
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		err := client.Connect(ctx)
-		log.Println(err)
+		err := client.Ping(ctx, readpref.Primary())
 		for err != nil {
 			time.Sleep(1000 * time.Millisecond)
 			err = client.Connect(ctx)
-			log.Println(err)
-		}
+			if err != nil {
+				log.Fatal(err)
+			} else {
+				err = client.Ping(ctx, readpref.Primary())
+			}
 
+		}
+		client.Connect(ctx)
 		if err != nil {
-			log.Fatal(err)
+
 		}
 
 		db = client.Database(database)
