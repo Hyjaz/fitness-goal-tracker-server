@@ -29,7 +29,7 @@ func AddCycle(c *gin.Context) {
 	startTime := parse.ConvertUnixTimestampToTime(cycleWithTimeAsString.StartTime)
 	endTime := parse.ConvertUnixTimestampToTime(cycleWithTimeAsString.EndTime)
 
-	err := models.AddCycle(startTime, endTime, &user)
+	err := models.AddCycle(cycleWithTimeAsString.Name, startTime, endTime, &user)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
